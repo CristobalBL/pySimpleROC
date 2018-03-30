@@ -6,32 +6,38 @@ import sys, getopt
 
 def main(argv):
 
-   inputfile = ''
-   fn = 0
-   fp = 0
+   clients_file = ''
+   fake_clients_file = ''
+
+   ## Default values
+   fn = 0.8 # We find roc curve intercept when 'falses negative' is equal to fn
+   fp = 0.8 # We find roc curve intercept when 'falses positive' is equal to fp
 
    try:
-      opts, args = getopt.getopt(argv,"i:n:p:",["ifile1=","fn=","fp="])
+      opts, args = getopt.gnu_getopt(argv,"n:p:",["fn=","fp="])
       print(opts)
-      #print(args)
+      print(args)
    except getopt.GetoptError:
-      print('Exception: roc_curve.py -i <inputfile1>  -n <fn> -p <fp>')
+      print('Exception: roc_curve.py <clients_file> <fake_clients_file>  -n <fn> -p <fp>')
       sys.exit(2)
+
+   clients_file = args[0]
+   fake_clients_file = args[1]
+
    for opt, arg in opts:
-      if opt in ("-i", "--ifile"):
-         inputfile = arg
-      elif opt in ("-n", "--fn"):
+      if opt in ("-n", "--fn"):
          fn = float(arg)
       elif opt in ("-p", "--fp"):
          fp = float(arg)
 
-   print('Archivo de entrada es :', inputfile)
-   print('Se buscara FP cuando FN es igual a', str(fn))
-   print('Se buscara FN cuando FP es igual a', str(fp))
+   print('Archivo de clientes:', clients_file)
+   print('Archivo de impostores: ', fake_clients_file)
+   print('Se buscará FP cuando FN es igual a', str(fn))
+   print('Se buscará FN cuando FP es igual a', str(fp))
 
    ## Get data
-   data1 = np.genfromtxt(inputfile + "_clientes", delimiter=' ', dtype=None)
-   data2 = np.genfromtxt(inputfile + "_impostores", delimiter=' ', dtype=None)
+   data1 = np.genfromtxt(clients_file, delimiter=' ', dtype=None)
+   data2 = np.genfromtxt(fake_clients_file, delimiter=' ', dtype=None)
 
    roc_values, area = getROCCurve(data1, data2)
 
@@ -49,7 +55,7 @@ def main(argv):
    print("ROC Curve area: " + "{:.3f}".format(area))
    computeDPrime(data1, data2)
 
-   pltRocCurve(roc_values, [fp, f2[1]], [f1[2],1-fn])
+   pltRocCurve(roc_values, [fp, f1[2]], [f2[1],1-fn])
 
 
 def column(matrix, i):
@@ -72,9 +78,20 @@ def find_fn(roc_values, fp):
     return roc_values[idx,:]
 
 def pltRocCurve(roc_values, p_fp, p_fn):
+    plt.xlabel('FP')
+    plt.ylabel('1-FN')
+    plt.title('Curva ROC')
     plt.axis([0, 1, 0, 1])
     plt.plot(column(roc_values, 1), column(roc_values, 2), 'r--')
-    plt.plot(p_fp,p_fn,'bs')
+    plt.plot(p_fp[0],p_fp[1],'gs')
+    plt.plot(p_fn[0], p_fn[1], 'bs')
+    plt.grid(True)
+    plt.annotate('(' + "{:.3f}".format(p_fp[0]) + ', ' + "{:.3f}".format(p_fp[1])  + ' )', xy=(p_fp[0], p_fp[1]), xytext=(p_fp[0] + 0.03, p_fp[1] - 0.03) ,
+                 arrowprops=dict(arrowstyle = '->', facecolor='black'),
+                 )
+    plt.annotate('(' + "{:.3f}".format(p_fn[0])  + ', ' + "{:.3f}".format(p_fn[1]) + ' )', xy=(p_fn[0], p_fn[1]), xytext=(p_fn[0] + 0.03, p_fn[1] - 0.03),
+                 arrowprops=dict(arrowstyle='->', facecolor='black'),
+                 )
     plt.show()
 
 def getROCCurve(data_clients, data_noclients):
