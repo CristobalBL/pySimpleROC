@@ -55,7 +55,7 @@ def main(argv):
    print("ROC Curve area: " + "{:.3f}".format(area))
    computeDPrime(data1, data2)
 
-   pltRocCurve(roc_values, [fp, f1[2]], [f2[1],1-fn])
+   pltRocCurve(roc_values, [fp, f1[2]], [f2[1],1-fn], [f3[1], f3[2]])
 
 
 def column(matrix, i):
@@ -77,7 +77,7 @@ def find_fn(roc_values, fp):
     #print(idx)
     return roc_values[idx,:]
 
-def pltRocCurve(roc_values, p_fp, p_fn):
+def pltRocCurve(roc_values, p_fp, p_fn, fpfn):
     plt.xlabel('FP')
     plt.ylabel('1-FN')
     plt.title('Curva ROC')
@@ -90,6 +90,10 @@ def pltRocCurve(roc_values, p_fp, p_fn):
                  arrowprops=dict(arrowstyle = '->', facecolor='black'),
                  )
     plt.annotate('(' + "{:.3f}".format(p_fn[0])  + ', ' + "{:.3f}".format(p_fn[1]) + ' )', xy=(p_fn[0], p_fn[1]), xytext=(p_fn[0] + 0.03, p_fn[1] - 0.03),
+                 arrowprops=dict(arrowstyle='->', facecolor='black'),
+                 )
+    plt.annotate('FP=FN', xy=(fpfn[0], fpfn[1]),
+                 xytext=(fpfn[0] + 0.05, fpfn[1] - 0.05),
                  arrowprops=dict(arrowstyle='->', facecolor='black'),
                  )
     plt.show()
