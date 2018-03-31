@@ -9,7 +9,7 @@ python3 roc_curve.py <clients_file> <fake_clients_file> -n <false_negative_level
 
 Data Files with scores (clients and fake_clients) must be have the next structure:
 
-<client_id> <score> 
+< client_id > < score > 
   
 The info obtained before run the program is: 
 - Quantity of clientes, fake clientes and scores.
