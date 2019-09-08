@@ -12,7 +12,7 @@ Data Files with scores (clients and fake_clients) must be have the next structur
 < client_id > < score > 
   
 The info obtained before run the program is: 
-- Quantity of clientes, fake clientes and scores.
+- Quantity of clients, fake clients and scores.
 - FNR and threshold when FPR have a fixed value (intercept is showed in ROC curve)
 - FPR and threshold when FNR have a fixed value (intercept is showed in ROC curve)
 - Values of FPR and FNR in ROC curve when are equals and threshold for that.
